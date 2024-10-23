@@ -1,3 +1,4 @@
+import os      as os_
 import os.path as os_path
 import sys
 import typing
@@ -6,15 +7,13 @@ from . import os
 
 def is_module(path:str):
 
-    return path.endswith('.py') or (os_path.isdir(path) and os_path.exists(os_path.join(path,'__init__.py')))
+    if os_path.isfile(path) and path.endswith('.py'): return True
 
-TEMP_DIR = 'C:\\Temp' if os.is_this_windows() else '/tmp'
-
-def get_user_env(name  :str,
-                 expand:bool=False):
+    if not os_path.isdir(path): return False
     
-    return (os.popen(f'powershell -NoProfile -Command "(Get-Item -Path HKCU:\\Environment).GetValue(\'{name}\')"') if expand else \
-            os.popen(f'powershell -NoProfile -Command "(Get-Item -Path HKCU:\\Environment).GetValue(\'{name}\', $null, \'DoNotExpandEnvironmentNames\')"')).read()
+    init_path = os_path.join(path, '__init__.py')
+    return os_path.exists(init_path) and \
+           os_path.isfile(init_path)
 
 class Enumerator[T]:
 
