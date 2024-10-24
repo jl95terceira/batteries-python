@@ -1,9 +1,7 @@
-import os      as os_
 import os.path as os_path
-import sys
 import typing
 
-from . import os
+from . import os, sys
 
 def is_module(path:str):
 
@@ -43,25 +41,19 @@ class ChainedCallables:
 
         self._ff = ff
 
-    def __call__(self, *a, **ka):
+    def __call__(self, *aa, **kaa):
 
-        for f in self._ff: f(*a, **ka)
+        for f in self._ff: f(*aa, **kaa)
 
-#_SIGINT_HOOKS:list[typing.Callable[[],None]] = []
-#def _SIGINT_MASTER_HANDLER(sig, frame):
-#
-#    for hook in _SIGINT_HOOKS: hook()
-#
-#signal.signal(signal.SIGINT, _SIGINT_MASTER_HANDLER)
-#def add_sigint_hook(hook:typing.Callable[[],None]):
-#
-#    _SIGINT_HOOKS.append(hook)
-#
-#add_sigint_hook(lambda: print('--------SIGINT--------'))
+class Raiser:
+
+    def __init__(self, ex:Exception):       self._ex = ex
+    def __call__(self)              : raise self._ex
+
 class XorResult():
 
-    def __init__(self,b):        self._b = b
-    def __bool__(self)  : return self._b
+    def __init__(self, b):        self._b = b
+    def __bool__(self)   : return self._b
 
 XOR_TRUE          = XorResult(True)
 XOR_FALSE_ALL     = XorResult(False)
@@ -76,14 +68,3 @@ def xor[T](predicate:typing.Callable[[T],bool], *aa:T):
 def xor_None(*aa):
 
     return xor(lambda a: a is not None, *aa)
-
-_SYS_ARGV_ITER = iter(sys.argv[1:])
-
-def a():
-
-    next(_SYS_ARGV_ITER)
-
-class Raiser:
-
-    def __init__(self, ex:Exception): self._ex = ex
-    def __call__(self)              : raise self._ex
