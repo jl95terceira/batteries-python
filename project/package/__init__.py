@@ -1,7 +1,11 @@
 import os.path as os_path
 import typing
 
-from . import os, sys
+from . import (
+    os, 
+    signal, 
+    sys,
+)
 
 def is_module(path:str):
 
