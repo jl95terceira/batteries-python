@@ -1,21 +1,19 @@
 import abc
 import os
 import signal
-import sys
 import threading
 import typing
 import uuid
 
-def is_this_windows():
+from .. import sys
 
-    return sys.platform == 'win32'
-
-TEMP_DIR = 'C:\\Temp' if is_this_windows() else '/tmp'
+TEMP_DIR = 'C:\\Temp' if sys.is_this_windows() else \
+           '/tmp'
 
 def get_user_env(name  :str,
                  expand:bool=False):
     
-    return (os.popen(f'powershell -NoProfile -Command "(Get-Item -Path HKCU:\\Environment).GetValue(\'{name}\')"') if expand else \
+    return (os.popen(f'powershell -NoProfile -Command "(Get-Item -Path HKCU:\\Environment).GetValue(\'{name}\')"')                                         if expand else \
             os.popen(f'powershell -NoProfile -Command "(Get-Item -Path HKCU:\\Environment).GetValue(\'{name}\', $null, \'DoNotExpandEnvironmentNames\')"')).read()
 
 _SIGINT_HOOKS:dict[str, typing.Callable[[],None]] = dict()
