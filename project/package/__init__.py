@@ -49,22 +49,3 @@ class Raiser:
 
     def __init__(self, ex:Exception):       self._ex = ex
     def __call__(self)              : raise self._ex
-
-class XorResult():
-
-    def __init__(self, b):        self._b = b
-    def __bool__(self)   : return self._b
-
-XOR_TRUE          = XorResult(True)
-XOR_FALSE_ALL     = XorResult(False)
-XOR_FALSE_NOT_ANY = XorResult(False)
-
-def xor[T](predicate:typing.Callable[[T],bool], *aa:T):
-
-    return XOR_FALSE_ALL     if     all(map(predicate, aa)) else \
-           XOR_FALSE_NOT_ANY if not any(map(predicate, aa)) else \
-           XOR_TRUE
-
-def xor_None(*aa):
-
-    return xor(lambda a: a is not None, *aa)
