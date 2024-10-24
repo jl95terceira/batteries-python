@@ -1,4 +1,4 @@
-Batteries to complete the standard library (Python)
+Batteries to complement the standard library (Python)
 
 # Build and install
 
