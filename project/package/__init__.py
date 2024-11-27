@@ -1,3 +1,4 @@
+import functools
 import os.path as os_path
 import typing
 
@@ -53,3 +54,12 @@ class Raiser:
 
     def __init__(self, ex:Exception):       self._ex = ex
     def __call__(self)              : raise self._ex
+
+def selfie  [T](v:T): return v # instead of "self" since the latter is widely used for the instance reference in methods
+
+class _Constant[T]:
+
+    def __init__(self, v:T): self._v = v
+    def __call__(self, *aa, **kaa): return self._v
+
+def constant[T](v:T): return _Constant(v).__call__
