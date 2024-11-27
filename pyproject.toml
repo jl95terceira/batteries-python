@@ -17,8 +17,8 @@ classifiers = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/jl95terceira/project-batteries-python"
-Issues = "https://github.com/jl95terceira/project-batteries-python/issues"
+Homepage = "https://github.com/jl95terceira/batteries-python"
+Issues = "https://github.com/jl95terceira/batteries-python/issues"
 
 [tool.hatch.build.targets.wheel]
 packages = ["project/package"]
