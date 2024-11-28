@@ -1,6 +1,6 @@
-import sys
+from sys import *
 
-_SYS_ARGV_ITER = iter(sys.argv[1:])
+_SYS_ARGV_ITER = iter(argv[1:])
 
 def a():
 
@@ -8,4 +8,4 @@ def a():
 
 def is_this_windows():
 
-    return sys.platform == 'win32'
+    return platform == 'win32'

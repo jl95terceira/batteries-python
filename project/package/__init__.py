@@ -1,15 +1,15 @@
-import os.path as os_path
-import typing
+import os.path as _os_path
+import typing as _typing
 
 def is_module(path:str):
 
-    if os_path.isfile(path) and path.endswith('.py'): return True
+    if _os_path.isfile(path) and path.endswith('.py'): return True
 
-    if not os_path.isdir(path): return False
+    if not _os_path.isdir(path): return False
     
-    init_path = os_path.join(path, '__init__.py')
-    return os_path.exists(init_path) and \
-           os_path.isfile(init_path)
+    init_path = _os_path.join(path, '__init__.py')
+    return _os_path.exists(init_path) and \
+           _os_path.isfile(init_path)
 
 class Enumerator[T]:
 
@@ -33,22 +33,40 @@ class Enumerator[T]:
 
         return self._managed.__iter__()
 
-class ChainedCallables:
+class _CallablesKeeper:
 
-    def __init__(self, *ff:typing.Callable):
+    def __init__(self, *ff:_typing.Callable):
 
         self._ff = ff
 
+class _ChainedCallables(_CallablesKeeper):
+
     def __call__(self, *aa, **kaa):
 
-        for f in self._ff: f(*aa, **kaa)
+        for f in self._ff: 
+            
+            f(*aa, **kaa)
 
-class Raiser:
+def chaincallables(*ff:_typing.Callable): return _ChainedCallables(*ff).__call__
+
+class _ChainedCallablesYielding(_CallablesKeeper):
+
+    def __call__(self, *aa, **kaa): 
+        
+        for f in self._ff: 
+            
+            yield f(*aa, **kaa)
+
+def chaincallablesyield(*ff:_typing.Callable): return _ChainedCallablesYielding(*ff).__call__
+
+class _Raiser:
 
     def __init__(self, ex:Exception):       self._ex = ex
     def __call__(self)              : raise self._ex
 
-def selfie  [T](v:T): return v # instead of "self" since the latter is widely used for the instance reference in methods
+def raiser(ex:Exception): return _Raiser(ex).__call__
+
+def selfie[T](v:T): return v # instead of "self" since the latter is widely used for the instance reference in methods
 
 class _Constant[T]:
 

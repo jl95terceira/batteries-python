@@ -1,10 +1,12 @@
-import abc
-import signal
-import threading
-import typing
-import uuid
+from signal import *
 
-_SIGINT_HOOKS:dict[str, typing.Callable[[],None]] = dict()
+import abc       as _abc
+import threading as _threading
+import typing    as _typing
+import uuid      as _uuid
+
+_SIGINT_HOOKS:dict[str, _typing.Callable[[],None]] = dict()
+_SIGINT_HOOKS_LOCK = _threading.Lock()
 def _SIGINT_MASTER_HANDLER(*aa, **kaa):
 
     with _SIGINT_HOOKS_LOCK:
@@ -13,29 +15,23 @@ def _SIGINT_MASTER_HANDLER(*aa, **kaa):
             
             hook()
 
-_SIGINT_HOOKS_LOCK = threading.Lock()
-signal.signal(signal.SIGINT, _SIGINT_MASTER_HANDLER)
+signal(SIGINT, _SIGINT_MASTER_HANDLER)
 
-class HookHandler(abc.ABC):
-
-    @abc.abstractmethod
-    def remove(self): pass
-
-class _SIGINT_HOOK_HANDLER(HookHandler):
+class HookHandler(_abc.ABC):
 
     def __init__(self, key:str): self._key = key
 
-    @typing.override
+    @_typing.override
     def remove(self):
         
         with _SIGINT_HOOKS_LOCK:
 
             del _SIGINT_HOOKS[self._key]
 
-def add_sigint_hook(hook:typing.Callable[[],None]) -> HookHandler:
+def add_sigint_hook(hook:_typing.Callable[[],None]):
 
     with _SIGINT_HOOKS_LOCK:
 
-        key                = uuid.uuid4()
+        key                = _uuid.uuid4()
         _SIGINT_HOOKS[key] = hook
-        return _SIGINT_HOOK_HANDLER(key)
+        return HookHandler(key)
