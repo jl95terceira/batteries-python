@@ -1,4 +1,4 @@
-Batteries to complement the standard library (Python)
+Convenient classes and methods to complement the standard library (Python)
 
 # Build and Install
 
@@ -18,4 +18,13 @@ A `.whl` is generated at directory `dist` which can then be `pip`-installed like
 
 ```
 python -m pip install dist\jl95terceira_batteries-...whl
+```
+
+# Test
+
+To implement tests, use `unittest`.
+To run the tests, run the following command at the top directory.
+
+```
+python -m unittest
 ```

@@ -33,13 +33,13 @@ class Enumerator[T]:
 
         return self._managed.__iter__()
 
-class _CallablesKeeper:
+class _CallablesRef:
 
     def __init__(self, *ff:_typing.Callable):
 
         self._ff = ff
 
-class _ChainedCallables(_CallablesKeeper):
+class _JoinedCallables(_CallablesRef):
 
     def __call__(self, *aa, **kaa):
 
@@ -47,9 +47,9 @@ class _ChainedCallables(_CallablesKeeper):
             
             f(*aa, **kaa)
 
-def chaincallables(*ff:_typing.Callable): return _ChainedCallables(*ff).__call__
+def joincallables(*ff:_typing.Callable): return _JoinedCallables(*ff).__call__
 
-class _ChainedCallablesYielding(_CallablesKeeper):
+class _JoinedFunctions(_CallablesRef):
 
     def __call__(self, *aa, **kaa): 
         
@@ -57,7 +57,7 @@ class _ChainedCallablesYielding(_CallablesKeeper):
             
             yield f(*aa, **kaa)
 
-def chaincallablesyield(*ff:_typing.Callable): return _ChainedCallablesYielding(*ff).__call__
+def joinfunctions(*ff:_typing.Callable): return _JoinedFunctions(*ff).__call__
 
 class _Raiser:
 
