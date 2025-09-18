@@ -5,7 +5,7 @@ import threading as _threading
 import typing    as _typing
 import uuid      as _uuid
 
-_SIGINT_HOOKS:dict[str, _typing.Callable[[],None]] = dict()
+_SIGINT_HOOKS:dict[_uuid.UUID, _typing.Callable[[],None]] = dict()
 _SIGINT_HOOKS_LOCK = _threading.Lock()
 def _SIGINT_MASTER_HANDLER(*aa, **kaa):
 
@@ -19,9 +19,8 @@ signal(SIGINT, _SIGINT_MASTER_HANDLER)
 
 class HookHandler(_abc.ABC):
 
-    def __init__(self, key:str): self._key = key
+    def __init__(self, key:_uuid.UUID): self._key = key
 
-    @_typing.override
     def remove(self):
         
         with _SIGINT_HOOKS_LOCK:

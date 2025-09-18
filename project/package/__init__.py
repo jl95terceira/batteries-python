@@ -1,4 +1,5 @@
 import os.path as _os_path
+import time as _time
 import typing as _typing
 
 def is_module(path:str):
@@ -74,3 +75,9 @@ class _Constant[T]:
     def __call__(self, *aa, **kaa): return self._v
 
 def constant[T](v:T): return _Constant(v).__call__
+
+def waitkbi(poll_time_s:float=60):
+
+    while True:
+        try: _time.sleep(poll_time_s)
+        except KeyboardInterrupt: break
