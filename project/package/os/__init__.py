@@ -1,8 +1,8 @@
 from os import *
 
-from .. import sys
+from .. import sys as _sys
 
-TEMP_DIR = 'C:\\Temp' if sys.is_this_windows() else \
+TEMP_DIR = 'C:\\Temp' if _sys.is_this_windows() else \
            '/tmp'
 
 def get_user_env(name  :str,
