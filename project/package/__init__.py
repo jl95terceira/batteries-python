@@ -1,6 +1,25 @@
+import functools as _functools
 import os.path as _os_path
 import time as _time
 import typing as _typing
+
+def warn_deprecated_redirect(funcnew:_typing.Callable|None=None):
+
+    def decorator(funcdepr:_typing.Callable):
+
+        @_functools.wraps(funcdepr)
+        def wrapper(*aa, **kaa):
+
+            print(f'[WARNING] {funcdepr.__module__}.{funcdepr.__qualname__} is deprecated{f', use {funcnew.__module__}.{funcnew.__qualname__} instead' if funcnew else ''}')
+            return funcdepr(*aa, **kaa)
+        
+        return wrapper
+    
+    return decorator
+
+def warn_deprecated(funcdepr:_typing.Callable):
+
+    return warn_deprecated_redirect(None)(funcdepr)
 
 def is_module(path:str):
 
@@ -18,18 +37,16 @@ class Enumerator[T]:
 
         self._managed:list[T] = list()
     
-    def E(self, x):
-
-        """
-        DEPRECATED - use as callable
-        """
-        return self(x)
-    
     def __call__(self, x):
 
         self._managed.append(x)
         return x
 
+    @warn_deprecated_redirect(__call__)
+    def E(self, x):
+
+        return self(x)
+    
     def __iter__(self):
 
         return self._managed.__iter__()
