@@ -22,8 +22,6 @@ def get_user_env(name  :str,
 
 
 def pout(cmd:str|list[str]):
-    if isinstance(cmd,str):
-        cmd = [cmd,]
     completed = _subprocess.run(
         cmd,
         stdout=_subprocess.PIPE,
