@@ -1,5 +1,8 @@
 from .. import *
 from os import *
+import contextlib as _contextlib
+import os as _os
+import shutil as _shutil
 
 import subprocess as _subprocess
 
@@ -7,6 +10,17 @@ from .. import sys as _sys
 
 TEMP_DIR = 'C:\\Temp' if _sys.is_this_windows() else \
            '/tmp'
+class TempDir(_contextlib.AbstractContextManager):
+
+    def __init__(self, path:str):
+        self._path = _os.path.join(TEMP_DIR, path)
+    def __enter__(self):
+        makedirs(self._path, exist_ok=True)
+        return self
+    def __exit__(self, *aa, **kaa) -> bool | None:
+        _shutil.rmtree(self._path)
+    def relpath(self, *subpaths:str) -> str:
+        return _os.path.join(self._path, *subpaths)
 
 def getuserenv(name  :str,
                expand:bool=False):
