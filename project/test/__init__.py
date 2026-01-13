@@ -62,3 +62,20 @@ class Test(unittest.TestCase):
 
         self.assertEqual   ('abc', constant('abc')(123))
         self.assertNotEqual('abc', constant('def')('abc'))
+
+    def test_future(self):
+
+        f = CompletableFuture[str]()
+        self.assertFalse(f.is_completed())
+        try:
+            f.get(timeout=0.5)
+        except TimeoutError: # as expected
+            pass
+        else:
+            self.fail()
+        s = 'hello, world'
+        f.complete(s)
+        self.assertTrue (f.is_completed())
+        self.assertEqual(f.get(timeout=0.5), s)
+        self.assertEqual(f.get(), s)
+        self.assertEqual(f.map(len).get(), len(s))

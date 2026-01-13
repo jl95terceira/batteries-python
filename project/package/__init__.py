@@ -110,6 +110,23 @@ class Future[T](_typing.Protocol):
     @_abc.abstractmethod
     def get(self, timeout:float|None=None) -> T: ...
 
+    def map[U](self, f:_typing.Callable[[T], U]) -> 'Future[U]':
+
+        parent = self
+        class MappedFuture(Future[U]):
+
+            @_typing.override
+            def is_completed(self) -> bool:
+
+                return parent.is_completed()
+            
+            @_typing.override
+            def get(self, timeout:float|None=None) -> U:
+
+                return f(parent.get(timeout))
+        
+        return MappedFuture()
+
 class _NotCompleted: pass
 _NOT_COMPLETED = _NotCompleted()
 class CompletableFuture[T](Future[T]):
