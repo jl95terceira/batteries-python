@@ -1,5 +1,6 @@
+import abc as _abc
 import functools as _functools
-import os.path as _os_path
+import threading as _threading
 import time as _time
 import typing as _typing
 
@@ -21,16 +22,18 @@ def warn_deprecated(funcdepr:_typing.Callable):
 
     return warn_deprecated_redirect(None)(funcdepr)
 
+from . import os as _os
+
+@warn_deprecated_redirect(_os.is_module)
 def is_module(path:str):
 
-    if _os_path.isfile(path) and path.endswith('.py'): return True
+    if _os.path.isfile(path) and path.endswith('.py'): return True
 
-    if not _os_path.isdir(path): return False
+    if not _os.path.isdir(path): return False
     
-    init_path = _os_path.join(path, '__init__.py')
-    return _os_path.exists(init_path) and \
-           _os_path.isfile(init_path)
-
+    init_path = _os.path.join(path, '__init__.py')
+    return _os.path.exists(init_path) and \
+           _os.path.isfile(init_path)
 class Enumerator[T]:
 
     def __init__(self):
@@ -98,3 +101,42 @@ def waitkbi(poll_time_s:float=60):
     while True:
         try: _time.sleep(poll_time_s)
         except KeyboardInterrupt: break
+
+class Future[T](_typing.Protocol):
+
+    @_abc.abstractmethod
+    def is_completed(self) -> bool: ...
+
+    @_abc.abstractmethod
+    def get(self, timeout:float|None=None) -> T: ...
+
+class _NotCompleted: pass
+_NOT_COMPLETED = _NotCompleted()
+class CompletableFuture[T](Future[T]):
+
+    def __init__(self): 
+
+        self._result:T|_NotCompleted = _NOT_COMPLETED
+        self._lock = _threading.Lock()
+        self._lock.acquire()
+
+    def complete(self, result:T):
+        
+        self._result = result
+        self._lock.release()
+
+    @_typing.override
+    def is_completed(self):
+
+        return not self._lock.locked()
+    
+    @_typing.override
+    def get(self, timeout:float|None=None):
+
+        acquired = self._lock.acquire(timeout=timeout) if timeout is not None else \
+                   self._lock.acquire()
+        if not acquired:
+            raise TimeoutError('Timeout expired before future was completed')
+        self._lock.release()
+        assert not isinstance(self._result, _NotCompleted)
+        return self._result  # type: ignore

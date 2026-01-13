@@ -8,6 +8,16 @@ import subprocess as _subprocess
 
 from .. import sys as _sys
 
+def is_module(path:str):
+
+    if _os.path.isfile(path) and path.endswith('.py'): return True
+
+    if not _os.path.isdir(path): return False
+    
+    init_path = _os.path.join(path, '__init__.py')
+    return _os.path.exists(init_path) and \
+           _os.path.isfile(init_path)
+
 TEMP_DIR = 'C:\\Temp' if _sys.is_this_windows() else \
            '/tmp'
 class TempDir(_contextlib.AbstractContextManager):
