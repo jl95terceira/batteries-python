@@ -1,7 +1,7 @@
-import os.path
 import unittest
 
 from ..package import *
+from ..package import os
 
 class TestException(Exception): pass
 
@@ -12,10 +12,10 @@ class Test(unittest.TestCase):
 
     def test_is_module(self):
 
-        self.assertTrue (is_module(os.path.split(__file__)[0]))
-        self.assertTrue (is_module(__file__))
-        self.assertFalse(is_module(os.path.join(__file__, Test.NOT_A_MODULE_DIR_PATH)))
-        self.assertFalse(is_module(os.path.join(__file__, Test.NOT_A_MODULE_FILE_PATH)))
+        self.assertTrue (os.is_module(os.path.split(__file__)[0]))
+        self.assertTrue (os.is_module(__file__))
+        self.assertFalse(os.is_module(os.path.join(__file__, Test.NOT_A_MODULE_DIR_PATH)))
+        self.assertFalse(os.is_module(os.path.join(__file__, Test.NOT_A_MODULE_FILE_PATH)))
 
     def test_Enumerator(self):
 
