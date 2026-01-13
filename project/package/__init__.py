@@ -155,12 +155,13 @@ class CompletableFuture[T](Future[T]):
         return not self._lock.locked()
     
     @_typing.override
-    def get(self, timeout:float|None=None):
+    def get(self, timeout:float|None=None) -> T:
 
         acquired = self._lock.acquire(timeout=timeout) if timeout is not None else \
                    self._lock.acquire()
         if not acquired:
             raise TimeoutError('Timeout expired before future was completed')
         self._lock.release()
+        self._result
         assert not isinstance(self._result, _NotCompleted)
         return self._result  # type: ignore
