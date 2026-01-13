@@ -125,6 +125,13 @@ class CompletableFuture[T](Future[T]):
         self._result = result
         self._lock.release()
 
+    def reset(self):
+
+        if not self.is_completed():
+            return
+        self._result = _NOT_COMPLETED
+        self._lock.acquire()
+
     @_typing.override
     def is_completed(self):
 
