@@ -4,23 +4,27 @@ import threading as _threading
 import time as _time
 import typing as _typing
 
-def warn_deprecated_redirect(funcnew:_typing.Callable|None=None):
+def warn_deprecated(arg:str|None|_typing.Callable=None):
+
+    if callable(arg):
+
+        return warn_deprecated()(arg)
 
     def decorator(funcdepr:_typing.Callable):
 
         @_functools.wraps(funcdepr)
         def wrapper(*aa, **kaa):
 
-            print(f'[WARNING] {funcdepr.__module__}.{funcdepr.__qualname__} is deprecated{f', use {funcnew.__module__}.{funcnew.__qualname__} instead' if funcnew else ''}')
+            print(f'[DEPRECATED] {funcdepr.__module__}.{funcdepr.__qualname__}{f': {arg}' if arg else ''}')
             return funcdepr(*aa, **kaa)
         
         return wrapper
     
     return decorator
 
-def warn_deprecated(funcdepr:_typing.Callable):
+def warn_deprecated_redirect(funcnew:_typing.Callable):
 
-    return warn_deprecated_redirect(None)(funcdepr)
+    return warn_deprecated(arg=f'Please, use {funcnew.__module__}.{funcnew.__qualname__} instead')
 
 from . import os as _os
 
